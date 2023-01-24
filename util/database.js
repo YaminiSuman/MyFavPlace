@@ -43,7 +43,6 @@ export function insertPlace(place) {
           place.location.lng,
         ],
         (_, result) => {
-          console.log("insert-res", result);
           resolve(result);
         },
         (_, error) => {
@@ -79,7 +78,6 @@ export function fetchPlaces() {
               )
             );
           }
-          console.log("selectAll-res", places);
           resolve(places);
         },
         (_, error) => {
@@ -98,8 +96,15 @@ export function fetchPlaceDetails(id) {
       tx.executeSql(
         "SELECT * FROM places WHERE id = ?",
         [id],
-          (_, result) => {
-          resolve(result.rows._array[0]);
+        (_, result) => {
+          const dbPlace = result.rows._array[0];
+          const place = new Place(
+            dbPlace.title,
+            dbPlace.imageUri,
+            { lat: dbPlace.lat, lng: dbPlace.lng, address: dbPlace.address },
+            dbPlace.id
+          );
+          resolve(place);
         },
         (_, error) => {
           reject(error);
