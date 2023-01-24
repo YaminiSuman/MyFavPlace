@@ -98,7 +98,7 @@ export function fetchPlaceDetails(id) {
       tx.executeSql(
         "SELECT * FROM places WHERE id = ?",
         [id],
-        (_, result) => {
+          (_, result) => {
           resolve(result.rows._array[0]);
         },
         (_, error) => {
