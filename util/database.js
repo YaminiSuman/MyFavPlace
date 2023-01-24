@@ -1,5 +1,7 @@
 import * as SQLite from "expo-sqlite";
+
 import { Place } from "../models/place";
+
 const database = SQLite.openDatabase("places.db");
 
 export function init() {
@@ -28,7 +30,6 @@ export function init() {
   return promise;
 }
 
-
 export function insertPlace(place) {
   const promise = new Promise((resolve, reject) => {
     database.transaction((tx) => {
@@ -41,8 +42,8 @@ export function insertPlace(place) {
           place.location.lat,
           place.location.lng,
         ],
-          (_, result) => {
-            console.log(result)
+        (_, result) => {
+          console.log("insert-res", result);
           resolve(result);
         },
         (_, error) => {
@@ -78,7 +79,27 @@ export function fetchPlaces() {
               )
             );
           }
+          console.log("selectAll-res", places);
           resolve(places);
+        },
+        (_, error) => {
+          reject(error);
+        }
+      );
+    });
+  });
+
+  return promise;
+}
+
+export function fetchPlaceDetails(id) {
+  const promise = new Promise((resolve, reject) => {
+    database.transaction((tx) => {
+      tx.executeSql(
+        "SELECT * FROM places WHERE id = ?",
+        [id],
+        (_, result) => {
+          resolve(result.rows._array[0]);
         },
         (_, error) => {
           reject(error);
